@@ -2,69 +2,58 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        ATMSimulator atmSimulator = new ATMSimulator();
+        // Khởi tạo danh sách người dùng
+        User[] users = new User[10];
+        users[0] = new User("user1", "11111", 5000000);
+        users[1]= new User("user2", "22222", 1000000);
+        users[2] = new User("user3", "33333", 2000000);
 
-        /*Calculator calculator = new Calculator();
-        System.out.println("Kết quả phép cộng : " + calculator.add(1.2d,3.8d));
-        System.out.println("Kết quả phép trừ : " + calculator.subtract(4.5d, 1.5d));
-        System.out.println("Kết quả phép nhân : " + calculator.multiply(2,2.5));
-        System.out.println("Kết quả phép chia : " + calculator.divide(5, 2.5));*/
-
-        // bai 3
-        Scanner input = new Scanner(System.in);
-        int accountNumber = 123456;
-        int pin = 1234;
-        double balance = 1000.0;
-
-        System.out.println("=================================================================================");
-        System.out.println("Welcome to the ATM Simulator!");
-
-        // Đăng nhập
-        System.out.print("Please enter your account number: ");
-        int enteredAccountNumber = input.nextInt();
-        System.out.print("Please enter your PIN: ");
-        int enteredPin = input.nextInt();
-
-        if (enteredAccountNumber == atmSimulator.accountNumber && atmSimulator.pin== enteredPin) {
-            System.out.println("Login successful!");
-
-            // Hiển thị menu
-            int choice = 0;
-            while (choice != 3) {
-                System.out.println("Please select an option:");
-                System.out.println("1. Withdraw");
-                System.out.println("2. Check balance");
-                System.out.println("3. Exit");
-                choice = input.nextInt();
-
-                switch (choice) {
-                    case 1:
-                        // Rút tiền
-                        System.out.print("Enter amount to withdraw: ");
-                        double withdrawalAmount = input.nextDouble();
-                        if (withdrawalAmount > balance) {
-                            System.out.println("Insufficient funds! Please try again.");
-                        } else {
-                            balance -= withdrawalAmount;
-                            System.out.printf("You have withdrawn $%.2f. Your new balance is $%.2f.\n", withdrawalAmount, balance);
-                        }
-                        break;
-                    case 2:
-                        // Xem số dư
-                        System.out.printf("Your current balance is $%.2f.\n", balance);
-                        break;
-                    case 3:
-                        // Thoát
-                        System.out.println("Thank you for using the ATM Simulator. Goodbye!");
-                        break;
-                    default:
-                        // Lựa chọn không hợp lệ
-                        System.out.println("Invalid choice! Please try again.");
-                        break;
-                }
+        ATMSimulator atmSimulator = new ATMSimulator(users,-1);
+        // Hiển thị màn hình đăng nhập
+        Scanner sc = new Scanner(System.in);
+        boolean isLoggedIn = false;
+        do {
+            System.out.println("============================Nhập thông tin tài khoản============================");
+            System.out.print("Username: ");
+            String username = sc.nextLine();
+            System.out.print("Password: ");
+            String password = sc.nextLine();
+            isLoggedIn = atmSimulator.validateLogin(username,password);
+            if (!isLoggedIn) {
+                System.out.println("Đăng nhập không thành công. Vui lòng thử lại.");
             }
-        } else {
-            System.out.println("Login failed! Please try again.");
+        } while (!isLoggedIn);
+
+        // Hiển thị màn hình chức năng
+        boolean isRunning = true;
+        while (isRunning) {
+            System.out.println("------------------------");
+            System.out.println("1. Rút tiền");
+            System.out.println("2. Xem số dư");
+            System.out.println("3. Thoát");
+            System.out.print("Your choice: ");
+
+            int choice = sc.nextInt();
+            switch (choice) {
+                case 1:
+                    System.out.println("Nhập số tiền muốn rút :");
+                    int money = sc.nextInt();
+                    atmSimulator.withdrawMoney(money);
+                    break;
+
+                case 2:
+                    atmSimulator.checkBalance();
+                    break;
+
+                case 3:
+                    isRunning = false;
+                    System.out.println("BYE BYE");
+                    break;
+
+                default:
+                    System.out.println("Vui lòng chọn đúng lựa chọn.");
+                    break;
+            }
         }
     }
 }
